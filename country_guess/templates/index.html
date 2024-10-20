@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Explore the Universe">
+    <meta property="og:description" content="Visualize and interact with countries in a galaxy of data.">
+    <meta property="og:image" content="path_to_your_image.png">
+    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Explore the Universe</title>
+
+    <!-- Leaflet.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #0a0b1e, #000000);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .starfield, .starfield2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .starfield {
+            animation: starfield 100s linear infinite;
+        }
+
+        .starfield2 {
+            animation: starfieldReverse 150s linear infinite;
+        }
+
+        @keyframes starfield {
+            from {
+                transform: translateX(0px) translateY(0px);
+            }
+            to {
+                transform: translateX(-500px) translateY(-500px);
+            }
+        }
+
+        @keyframes starfieldReverse {
+            from {
+                transform: translateX(0px) translateY(0px);
+            }
+            to {
+                transform: translateX(500px) translateY(500px);
+            }
+        }
+
+        .planet {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #2b2b6f, #222);
+            border-radius: 50%;
+            box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.5);
+            animation: planetRotation 40s infinite linear;
+            z-index: 1;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(white, rgba(255, 255, 255, 0));
+            opacity: 0.7;
+            animation: shootingStar 3s ease-in-out infinite;
+        }
+
+        .shooting-star:nth-child(1) {
+            top: 20%;
+            left: 70%;
+            animation-delay: 1s;
+        }
+
+        .shooting-star:nth-child(2) {
+            top: 50%;
+            left: 10%;
+            animation-delay: 4s;
+        }
+
+        .shooting-star:nth-child(3) {
+            top: 80%;
+            left: 50%;
+            animation-delay: 7s;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-300px) translateX(-300px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-400px) translateX(-400px);
+            }
+        }
+
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1300px;
+            height: 80%;
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            z-index: 2;
+            position: relative;
+        }
+
+        .left-section {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+        }
+
+        .left-section h1 {
+            font-size: 3.2rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            animation: textGlow 2s infinite alternate;
+        }
+
+        .left-section form {
+            width: 100%;
+        }
+
+        .left-section label {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .left-section input[type="text"] {
+            padding: 15px;
+            width: calc(100% - 30px);
+            font-size: 1.2rem;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+        }
+
+        .left-section input[type="text"]:focus {
+            border: 1px solid #a0d2eb;
+        }
+
+        .left-section input[type="submit"] {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #a0d2eb;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .left-section input[type="submit"]:hover {
+            background-color: #86bedf;
+        }
+
+        .right-section {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes planetRotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 10px #a0d2eb;
+            }
+            to {
+                text-shadow: 0 0 20px #d3f6f3;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="starfield"></div>
+    <div class="starfield2"></div>
+    <div class="planet"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+
+    <div class="container">
+        <div class="left-section">
+            <h1>Explore the Universe</h1>
+            <form id="countryForm">
+                <label for="country">Enter Country Name</label>
+                <input type="text" id="country" name="country" placeholder="e.g. USA">
+                <input type="submit" value="Explore Now">
+            </form>
+        </div>
+
+        <div class="right-section">
+            <div class="map-container" id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <script>
+        const map = L.map('map').setView([20, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        document.getElementById('countryForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const country = document.getElementById('country').value;
+            fetch(`https://restcountries.com/v3.1/name/${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const countryData = data[0];
+                        const lat = countryData.latlng[0];
+                        const lng = countryData.latlng[1];
+                        map.setView([lat, lng], 5);
+                        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${countryData.name.common}</b><br>Capital: ${countryData.capital}`).openPopup();
+                    } else {
+                        alert('Country not found.');
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>
