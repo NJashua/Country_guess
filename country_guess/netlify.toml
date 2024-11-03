@@ -1,0 +1,8 @@
+[build]
+  publish = "templates"         # Where your static files live (optional)
+  functions = "functions"       # Location of serverless functions
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/main"
+  status = 200
