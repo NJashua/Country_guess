@@ -1,8 +1,7 @@
 [build]
-  functions = "./functions"
-  command = "pip install -r requirements.txt"
+  functions = "functions"
 
 [[redirects]]
-  from = "/api/*"
+  from = "/*"
   to = "/.netlify/functions/main"
   status = 200
