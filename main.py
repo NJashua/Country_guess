@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import plotly.express as px
 import pandas as pd
+import os
+import uvicorn
 
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
@@ -27,8 +29,8 @@ async def generate_map(request: Request, country: str = Form(...)):
     )
     fig.update_layout(
         autosize=True,
-        width=1000,  
-        height=500  
+        width=1000,
+        height=500
     )
     graph_html = fig.to_html(full_html=False)
     return templates.TemplateResponse("index.html", {
@@ -36,3 +38,7 @@ async def generate_map(request: Request, country: str = Form(...)):
         "graph": graph_html,
         "country": country
     })
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
