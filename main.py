@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import plotly.express as px
 import pandas as pd
-from mangum import Mangum
 
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
@@ -37,5 +36,3 @@ async def generate_map(request: Request, country: str = Form(...)):
         "graph": graph_html,
         "country": country
     })
-
-handler = Mangum(app)  # Use Mangum to create a Lambda-compatible handler
